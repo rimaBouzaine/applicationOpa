@@ -12,7 +12,7 @@ spec:
   - IPv4
   ipFamilyPolicy: SingleStack
   ports:
-   - port: 8090
+   - port: 80
      protocol: TCP
      targetPort: 5000
   selector:
