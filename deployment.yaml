@@ -19,5 +19,5 @@ spec:
     spec:
       containers:
       - name: my-flask-app
-        image: bouzaianerima/flask-kubectl:6.0.0
+        image: bouzaianerima/flask-kubectl:5.1.0
 
