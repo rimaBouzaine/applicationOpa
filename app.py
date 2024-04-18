@@ -4,7 +4,7 @@ from gevent.pywsgi import WSGIServer
 app = Flask(__name__)
 # Définition du label pour l'application Flask
 app.config['LABEL_NAME'] = 'my-flask-app'
-@app.route('/application')
+@app.route('/my-api')
 def get_services():
     try:
         # Exécute la commande `kubectl get svc` en tant que sous-processus
