@@ -6,7 +6,7 @@ metadata:
    service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
 spec:
   externalIPs:
-   - 44.211.233.98
+   - 44.211.223.98
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
