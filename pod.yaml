@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-flask-pod
+spec:
+  containers:
+  - name: my-flask-app
+    image: bouzaianerima/flask-kubectl:latest
+    ports:
+    - containerPort: 5000

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kguard-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-flask-pod
+  template:
+    metadata:
+      labels:
+        app: my-flask-pod
+    spec:
+      containers:
+      - image: bouzaianerima/flask-kubectl:4.1.0
+        name: my-flask-app
+  strategy:
+    type: Recreate
+
