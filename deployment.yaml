@@ -2,19 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kguard-deployment
+  namespace: default
+  labels:
+    env: production  # Ajoutez l'étiquette "env" avec une valeur appropriée
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: my-flask-pod
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
         app: my-flask-pod
     spec:
       containers:
-      - image: bouzaianerima/flask-kubectl:4.3.0
-        name: my-flask-app
-  strategy:
-    type: Recreate
+      - name: my-flask-app
+        image: bouzaianerima/flask-kubectl:6.0.0
 
