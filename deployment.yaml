@@ -13,7 +13,7 @@ spec:
         app: my-flask-pod
     spec:
       containers:
-      - image: bouzaianerima/flask-kubectl:4.1.0
+      - image: bouzaianerima/flask-kubectl:4.3.0
         name: my-flask-app
   strategy:
     type: Recreate
