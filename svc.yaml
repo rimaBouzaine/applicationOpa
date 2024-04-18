@@ -6,7 +6,7 @@ metadata:
    service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
 spec:
   externalIPs:
-   - 3.252.145.17
+   - 3.83.201.160
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
@@ -19,7 +19,7 @@ spec:
     app: my-flask-pod
   sessionAffinity: None
   type: LoadBalancer
-status:
-  loadBalancer:
-    ingress:
-    - ip: 3.89.143.5
+#status:
+ # loadBalancer:
+  #  ingress:
+   # - ip: 3.83.201.106
