@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 import subprocess
+from gevent.pywsgi import WSGIServer
 app = Flask(__name__)
 # Définition du label pour l'application Flask
 app.config['LABEL_NAME'] = 'my-flask-app'
@@ -20,4 +21,7 @@ def get_services():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+   # app.run(host='0.0.0.0', port=5000)
+    http_server = WSGIServer(('', 5000), app)
+    http_server.serve_forever()
+
