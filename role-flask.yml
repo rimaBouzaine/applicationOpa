@@ -4,7 +4,7 @@ metadata:
   name: my-role-flask
 #  namespace: default
 rules:
-- apiGroups: [""]
+- apiGroups: ["templates.gatekeeper.sh"]
   resources: ["pods","services"]
   verbs: ["get", "list", "watch"]
 
