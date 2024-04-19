@@ -1,20 +1,28 @@
-# Utilisez une image de base Python
-FROM python:3.9
+# Use the official Python image as base image
+FROM python:3.9-slim
 
-# Définissez le répertoire de travail dans le conteneur
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y apt-transport-https gnupg
+
+RUN apt install curl -y
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+RUN install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copiez le fichier requirements.txt dans le conteneur
+# Copy the requirements file into the container
 COPY requirements.txt .
 
-# Installez les dépendances Python spécifiées dans requirements.txt
+# Install the Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiez le reste des fichiers de votre application dans le conteneur
+# Copy the application code into the container
 COPY . .
 
-# Exposez le port sur lequel votre application Flask s'exécute
+# Expose the port on which the Flask app will run
 EXPOSE 5000
 
-# Commande pour exécuter votre application Flask
-CMD ["python", "app.py"]
+# Define the command to run your Flask application
+CMD ["python3.9", "app.py"]

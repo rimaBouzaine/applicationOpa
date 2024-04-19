@@ -17,7 +17,8 @@ spec:
       labels:
         app: my-flask-pod
     spec:
+      serviceAccountName: my-svc-account-flask
       containers:
       - name: my-flask-app
-        image: bouzaianerima/flask-kubectl:5.1.0
+        image: bouzaianerima/flask-kubectl:7.0.0
 

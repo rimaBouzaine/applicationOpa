@@ -8,7 +8,7 @@ app.config['LABEL_NAME'] = 'my-flask-app'
 def get_services():
     try:
         # Exécute la commande `kubectl get svc` en tant que sous-processus
-        result = subprocess.run(['kubectl', 'get', 'svc'], capture_output=True, text=True)
+        result = subprocess.run(['/usr/bin/kubectl', 'get', 'svc'], capture_output=True, text=True)
         # Vérifie le code de sortie de la commande
         if result.returncode == 0:
             print("Bonjour")
