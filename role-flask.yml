@@ -2,13 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: my-role-flask
-  namespace: gatekeeper-system
-rules:
 rules:
 - apiGroups: [""]
-  resources: ["services"]
-  verbs: ["get", "list", "watch"]
-#- apiGroups: ["templates.gatekeeper.sh"]
-#  resources: ["pods","services"]
-#  verbs: ["get", "list", "watch"]
-
+  resources: ["pods","services","ConstraintTemplate"]
+  verbs: ["watch","list","get", "create", "update", "patch", "delete"]
