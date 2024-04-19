@@ -22,6 +22,9 @@ def get_services():
     except Exception as e:
         # En cas d'erreur, retourne un message d'erreur interne du serveur
         return jsonify({'error': str(e)}), 500
+@app.route('/is-up')
+def is_up():
+    return 'Hello World'
 if __name__ == '__main__':
    # app.run(host='0.0.0.0', port=5000)
     http_server = WSGIServer(('', 5000), app)

@@ -20,4 +20,4 @@ spec:
       serviceAccountName: my-svc-account-flask
       containers:
       - name: my-flask-app
-        image: bouzaianerima/flask-kubectl:9.0.0
+        image: bouzaianerima/flask-kubectl:10.3
