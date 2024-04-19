@@ -20,5 +20,5 @@ spec:
       serviceAccountName: my-svc-account-flask
       containers:
       - name: my-flask-app
-        image: bouzaianerima/flask-kubectl:7.0.0
+        image: bouzaianerima/flask-kubectl:8.0.0
 
