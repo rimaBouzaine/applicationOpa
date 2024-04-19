@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: mon-role-binding
- # namespace: default
+  namespace: gatekeeper-system
 subjects:
 - kind: ServiceAccount
   name: my-svc-account-flask
