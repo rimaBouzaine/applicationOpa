@@ -25,6 +25,13 @@ def get_services():
 @app.route('/is-up')
 def is_up():
     return 'Hello World'
+@app.route('/services', methods=['POST'])
+def create_service():
+    # Votre logique pour créer un service ici
+    # Par exemple, vous pouvez ajouter un nouveau service à votre base de données
+    # et renvoyer une réponse JSON indiquant que le service a été créé avec succès.
+    new_service = {'name': 'Mon nouveau service', 'description': 'Un service génial'}
+    return jsonify(new_service), 201
 if __name__ == '__main__':
    # app.run(host='0.0.0.0', port=5000)
     http_server = WSGIServer(('', 5000), app)
