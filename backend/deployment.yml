@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mybackend-deployment
+  labels:
+    app: mybackend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mybackend
+  template:
+    metadata:
+      labels:
+        app: mybackend
+    spec:
+      containers:
+      - name: mybackend
+        image: bouzaianerima/backend:10.0
+        ports:
+        - containerPort: 5000
+
