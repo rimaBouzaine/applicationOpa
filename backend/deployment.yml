@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: mybackend
-        image: bouzaianerima/backend:10.0
+        image: bouzaianerima/backend:32.0
         ports:
         - containerPort: 5000
 
