@@ -5,7 +5,8 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: my-svc-account
-  namespace: gatekeeper-system
+#  namespace: gatekeeper-system
+  namespace: default
 roleRef:
   kind: ClusterRole
   name: my-role-svc
