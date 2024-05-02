@@ -51,38 +51,36 @@ def add_data():
         return jsonify({'message': 'Error adding data', 'error': str(e)}), 500
 
 # Route for user login
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['POST'])
 def login():
     try:
-        # Execute kubectl command to get service information
-        result = subprocess.run(['kubectl', 'get', 'svc'], capture_output=True, text=True)
-#        result = subprocess.run(['kubectl', 'get', 'svc','-n','gatekeeper-system'], capture_output=True, text=True)
+        # Get the JSON data from the request
+        data = request.json
 
-        # Get username and password from request parameters
-        username = request.args.get('username')
-        password = request.args.get('password')
+        # Check if login and password are provided in the JSON data
+        if 'username' in data and 'password' in data:
+            # Validate the login and password
+            username = data['username']
+            password = data['password']
 
-        # Check if username or password is missing
-        if not (username and password):
-            return jsonify({'message': 'Authentication required'}), 401
+            # Query user from the database
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT * FROM user WHERE name = %s", (username,))
+            user = cur.fetchone()
+            cur.close()
 
-        # Query user from the database
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM user WHERE name = %s", (username,))
-        user = cur.fetchone()
-        cur.close()
+            # Check if user exists and password is correct
+            if user and check_password_hash(user[4], password):
+                # Generate kubeToken and userToken
+                kube_token = secrets.token_hex(16)
+                user_token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
 
-        # Check if kubectl command executed successfully
-        if result.returncode != 0:
-            return jsonify({'error': result.stderr}), 500
-
-        # Check if user exists and password is correct
-        if user and check_password_hash(user[4], password):
-            # Generate JWT token
-            token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
-            return jsonify({'token': token})
+                # Return the tokens as a JSON response
+                return jsonify({'kubeToken': kube_token, 'userToken': user_token})
+            else:
+                return jsonify({'message': 'Invalid credentials'}), 401
         else:
-            return jsonify({'message': 'Invalid credentials'}), 401
+            return jsonify({'error': 'Username and password are required'}), 400
     except Exception as e:
         return jsonify({'message': 'An error occurred', 'error': str(e)}), 500
 
