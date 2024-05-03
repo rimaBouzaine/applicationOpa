@@ -68,8 +68,7 @@ def login():
             # Check if user exists and password is correct
             if user and check_password_hash(user[4], password):
                 # Generate kubeToken and userToken
-                result = subprocess.run(['kubectl', 'create', 'token', 'my-svc-account'], capture_output=True, text=True)
-                
+                result = subprocess.run(['kubectl', 'create', 'token', 'my-svc-account'], capture_output=True, text=True) 
                 if result.returncode == 0:
                     kube_token = result.stdout.strip()
                     user_token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, kube_token)
@@ -83,25 +82,7 @@ def login():
             return jsonify({'error': 'Username and password are required'}), 400
     except Exception as e:
         return jsonify({'message': 'An error occurred', 'error': str(e)}), 500
-'''
-            # Check if user exists and password is correct
-            if user and check_password_hash(user[4], password):
-                # Generate kubeToken and userToken
-                kube_token = subprocess.run(['kubectl', 'create', 'token', 'my-svc-account'], capture_output=True, text=True).stdout.strip()
-                print("---------------------")
-                print("token kube equal to ", kube_token)
-                user_token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, kube_token)
 
-                # Return the tokens as a JSON response
-                return jsonify({'kubeToken': 'S1', 'userToken': user_token})
-                #return jsonify({'kubeToken': kube_token, 'userToken': user_token})
-            else:
-                return jsonify({'message': 'Invalid credentials'}), 401
-        else:
-            return jsonify({'error': 'Username and password are required'}), 400
-    except Exception as e:
-        return jsonify({'message': 'An error occurred', 'error': str(e)}), 500
-'''
 if __name__ == '__main__':
     # Run the application using gevent WSGI server
     http_server = WSGIServer(('', 5000), app)
