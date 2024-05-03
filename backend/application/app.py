@@ -5,7 +5,6 @@ from gevent.pywsgi import WSGIServer
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
-import secrets
 
 app = Flask(__name__)
 
@@ -14,9 +13,6 @@ app.config['MYSQL_HOST'] = 'mysql-service'
 app.config['MYSQL_USER'] = 'mysql'
 app.config['MYSQL_PASSWORD'] = 'mysql'
 app.config['MYSQL_DB'] = 'sample'
-
-# Secret key for JWT
-app.config['SECRET_KEY'] = secrets.token_hex(16)  
 
 mysql = MySQL(app)
 
@@ -72,18 +68,40 @@ def login():
             # Check if user exists and password is correct
             if user and check_password_hash(user[4], password):
                 # Generate kubeToken and userToken
-                kube_token = secrets.token_hex(16)
-                user_token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
-
-                # Return the tokens as a JSON response
-                return jsonify({'kubeToken': kube_token, 'userToken': user_token})
+                result = subprocess.run(['kubectl', 'create', 'token', 'my-svc-account'], capture_output=True, text=True)
+                
+                if result.returncode == 0:
+                    kube_token = result.stdout.strip()
+                    user_token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, kube_token)
+                    return jsonify({'kubeToken': kube_token, 'userToken': user_token})
+                else:
+                    error_msg = result.stderr.strip() if result.stderr else 'Failed to generate kubeToken'
+                    return jsonify({'message': error_msg}), 500
             else:
                 return jsonify({'message': 'Invalid credentials'}), 401
         else:
             return jsonify({'error': 'Username and password are required'}), 400
     except Exception as e:
         return jsonify({'message': 'An error occurred', 'error': str(e)}), 500
+'''
+            # Check if user exists and password is correct
+            if user and check_password_hash(user[4], password):
+                # Generate kubeToken and userToken
+                kube_token = subprocess.run(['kubectl', 'create', 'token', 'my-svc-account'], capture_output=True, text=True).stdout.strip()
+                print("---------------------")
+                print("token kube equal to ", kube_token)
+                user_token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, kube_token)
 
+                # Return the tokens as a JSON response
+                return jsonify({'kubeToken': 'S1', 'userToken': user_token})
+                #return jsonify({'kubeToken': kube_token, 'userToken': user_token})
+            else:
+                return jsonify({'message': 'Invalid credentials'}), 401
+        else:
+            return jsonify({'error': 'Username and password are required'}), 400
+    except Exception as e:
+        return jsonify({'message': 'An error occurred', 'error': str(e)}), 500
+'''
 if __name__ == '__main__':
     # Run the application using gevent WSGI server
     http_server = WSGIServer(('', 5000), app)

@@ -3,7 +3,9 @@ kind: ClusterRole
 metadata:
   name: my-role-svc
 rules:
-- apiGroups: [""]
-#- apiGroups: ["templates.gatekeeper.sh","constraints.gatekeeper.sh"]
+- apiGroups: ["templates.gatekeeper.sh","constraints.gatekeeper.sh"]
   resources: ["*"]
   verbs: ["watch","list","get", "create", "update", "patch", "delete"]
+- apiGroups: [""]
+  resources: ["serviceaccounts/token"]
+  verbs: ["create"]    
