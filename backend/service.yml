@@ -5,8 +5,6 @@ metadata:
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
 spec:
-  externalIPs:
-    - 3.82.117.56
   internalTrafficPolicy: Cluster
   ipFamilies:
     - IPv4
@@ -15,9 +13,6 @@ spec:
     - port: 80
       protocol: TCP
       targetPort: 5000
-      nodePort: 30595
   selector:
     app: mybackend
   sessionAffinity: None
-  type: LoadBalancer
-

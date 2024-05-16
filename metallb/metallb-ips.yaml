@@ -1,0 +1,8 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: my-config-ip-metalb
+  namespace: metallb-system
+spec:
+  addresses:
+  - 52.91.254.65-52.91.254.65 #IP WORKER AND NOT MASTER!!!!!!!
