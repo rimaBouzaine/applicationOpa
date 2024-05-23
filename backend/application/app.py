@@ -1,12 +1,14 @@
 import subprocess
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response  # **Ajout de make_response**
 from flask_mysqldb import MySQL
 from gevent.pywsgi import WSGIServer
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})  # **Ajout de la configuration CORS plus complète**
 
 # MySQL Configuration
 app.config['MYSQL_HOST'] = 'mysql-service'
@@ -15,6 +17,10 @@ app.config['MYSQL_PASSWORD'] = 'mysql'
 app.config['MYSQL_DB'] = 'sample'
 
 mysql = MySQL(app)
+
+@app.route('/isup')
+def isup():
+    return '200 OK'
 
 # Function to hash the password
 def hash_password(password):
@@ -47,44 +53,56 @@ def add_data():
         return jsonify({'message': 'Error adding data', 'error': str(e)}), 500
 
 # Route for user login
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'OPTIONS'])
 def login():
-    try:
-        # Get the JSON data from the request
-        data = request.json
-
-        # Check if login and password are provided in the JSON data
-        if 'username' in data and 'password' in data:
-            # Validate the login and password
-            username = data['username']
-            password = data['password']
-
-            # Query user from the database
-            cur = mysql.connection.cursor()
-            cur.execute("SELECT * FROM user WHERE name = %s", (username,))
-            user = cur.fetchone()
-            cur.close()
-
-            # Check if user exists and password is correct
-            if user and check_password_hash(user[4], password):
-                # Generate kubeToken and userToken
-                result = subprocess.run(['kubectl', 'create', 'token', 'my-svc-account'], capture_output=True, text=True) 
-                if result.returncode == 0:
-                    kube_token = result.stdout.strip()
-                    user_token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, kube_token)
-                    return jsonify({'kubeToken': kube_token, 'userToken': user_token})
+    if request.method == "OPTIONS":  # CORS preflight
+        return _build_cors_preflight_response()  # **Ajout de la réponse preflight**
+    elif request.method == "POST":
+        try:
+            # Get the JSON data from the request
+            data = request.json
+            # Check if login and password are provided in the JSON data
+            if 'username' in data and 'password' in data:
+                # Validate the login and password
+                username = data['username']
+                password = data['password']
+                # Query user from the database
+                cur = mysql.connection.cursor()
+                cur.execute("SELECT * FROM user WHERE name = %s", (username,))
+                user = cur.fetchone()
+                cur.close()
+                # Check if user exists and password is correct
+                if user and check_password_hash(user[4], password):
+                    # Generate kubeToken and userToken
+                    result = subprocess.run(['kubectl', 'create', 'token', 'my-svc-account'], capture_output=True, text=True)
+                    if result.returncode == 0:
+                        kube_token = result.stdout.strip()
+                        user_token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, kube_token, algorithm='HS256')  # **Ajout de l'algorithme pour jwt.encode**
+                        return jsonify({'kubeToken': kube_token, 'userToken': user_token})
+                    else:
+                        error_msg = result.stderr.strip() if result.stderr else 'Failed to generate kubeToken'
+                        return jsonify({'message': error_msg}), 500
                 else:
-                    error_msg = result.stderr.strip() if result.stderr else 'Failed to generate kubeToken'
-                    return jsonify({'message': error_msg}), 500
+                    return jsonify({'message': 'Invalid credentials'}), 401
             else:
-                return jsonify({'message': 'Invalid credentials'}), 401
-        else:
-            return jsonify({'error': 'Username and password are required'}), 400
-    except Exception as e:
-        return jsonify({'message': 'An error occurred', 'error': str(e)}), 500
+                return jsonify({'error': 'Username and password are required'}), 400
+        except Exception as e:
+            return jsonify({'message': 'An error occurred', 'error': str(e)}), 500
+    else:
+        raise RuntimeError("Weird - don't know how to handle method {}".format(request.method))
+
+def _build_cors_preflight_response():
+    response = make_response()  # **Ajout de make_response**
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Headers', "*")
+    response.headers.add('Access-Control-Allow-Methods', "*")
+    return response
+
+def _corsify_actual_response(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 if __name__ == '__main__':
     # Run the application using gevent WSGI server
     http_server = WSGIServer(('', 5000), app)
     http_server.serve_forever()
-

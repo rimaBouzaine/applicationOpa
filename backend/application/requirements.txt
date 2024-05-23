@@ -5,4 +5,5 @@ mysqlclient==2.0.3
 Werkzeug==2.0.*
 gevent==24.2.1
 PyJWT==2.3.0
+flask-cors
 
