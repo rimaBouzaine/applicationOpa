@@ -5,4 +5,4 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-  - 54.161.128.131-54.161.128.131 #IP WORKER AND NOT MASTER!!!!!!!
+  - 3.82.146.132-3.82.146.132 #IP WORKER AND NOT MASTER!!!!!!!

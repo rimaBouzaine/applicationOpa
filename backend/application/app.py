@@ -1,11 +1,12 @@
 import subprocess
-from flask import Flask, jsonify, request, make_response  # **Ajout de make_response**
+from flask import Flask, Response, jsonify, request, make_response  # **Ajout de make_response**
 from flask_mysqldb import MySQL
 from gevent.pywsgi import WSGIServer
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 from flask_cors import CORS
+import requests
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # **Ajout de la configuration CORS plus complète**
@@ -101,6 +102,34 @@ def _build_cors_preflight_response():
 def _corsify_actual_response(response):
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
+
+TARGET_API_BASE_URL = "https://kubernetes.default.svc"
+
+@app.route('/proxy/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
+def proxy(path):
+    # Build the full URL for the target service API
+    url = f"{TARGET_API_BASE_URL}/{path}"
+    
+    # Forward the request to the target service API
+    response = requests.request(
+        method=request.method,
+        url=url,
+        headers={key: value for key, value in request.headers if key != 'Host'},
+        params=request.args,
+        data=request.get_data(),
+        cookies=request.cookies,
+        files=request.files,
+        verify=False,
+    )
+    
+    # Create a Flask Response object from the service API response
+    proxy_response = Response(
+        response.content,
+        status=response.status_code,
+        headers=dict(response.headers),
+    )
+    
+    return proxy_response
 
 if __name__ == '__main__':
     # Run the application using gevent WSGI server
