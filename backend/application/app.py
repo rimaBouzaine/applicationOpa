@@ -122,13 +122,19 @@ def proxy(path):
         verify=False,
     )
     
+    response_headers = dict(response.headers)
+    # Remove 'Transfer-Encoding' header if 'Content-Length' is present
+    #if 'Content-Length' in response_headers:
+    response_headers.pop('Transfer-Encoding', None)
+
+
     # Create a Flask Response object from the service API response
     proxy_response = Response(
         response.content,
         status=response.status_code,
-        headers=dict(response.headers),
+        headers=response_headers,
     )
-    
+    print("I return a response........====>>>>")   
     return proxy_response
 
 if __name__ == '__main__':
