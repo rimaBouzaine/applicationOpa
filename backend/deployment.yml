@@ -17,6 +17,6 @@ spec:
       serviceAccountName: my-svc-account
       containers:
       - name: mybackend
-        image: bouzaianerima/backend:85.0
+        image: bouzaianerima/backend:87.0
         ports:
         - containerPort: 5000

@@ -73,7 +73,7 @@ def login():
                 user = cur.fetchone()
                 cur.close()
                 # Check if user exists and password is correct
-                if user and check_password_hash(user[4], password):
+                if user and check_password_hash(user[3], password):
                     # Generate kubeToken and userToken
                     result = subprocess.run(['kubectl', 'create', 'token', 'my-svc-account'], capture_output=True, text=True)
                     if result.returncode == 0:
