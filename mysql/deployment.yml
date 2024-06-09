@@ -14,6 +14,9 @@ spec:
       labels:
         app: mysql
     spec:
+      securityContext:  
+        runAsNonRoot: true   
+        runAsUser: 1000      
       containers:
       - name: mysql
         image: mysql:latest
@@ -35,3 +38,4 @@ spec:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
           claimName: mysql-pv-claim-v1
+
