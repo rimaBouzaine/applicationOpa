@@ -20,3 +20,8 @@ spec:
         image: bouzaianerima/backend:87.0
         ports:
         - containerPort: 5000
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true  
+          runAsUser: 1000     
+
