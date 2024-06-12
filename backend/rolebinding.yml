@@ -4,8 +4,7 @@ metadata:
   name: my-role-binding-v1
 subjects:
 - kind: ServiceAccount
-  name: my-svc-account
-#  namespace: gatekeeper-system
+  name: my-svc-account-v1
   namespace: default
 roleRef:
   kind: ClusterRole

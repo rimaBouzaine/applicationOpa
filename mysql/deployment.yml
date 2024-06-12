@@ -13,10 +13,7 @@ spec:
     metadata:
       labels:
         app: mysql
-    spec:
-      securityContext:  
-        runAsNonRoot: true   
-        runAsUser: 1000      
+    spec:      
       containers:
       - name: mysql
         image: mysql:latest

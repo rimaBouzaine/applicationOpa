@@ -14,14 +14,14 @@ spec:
       labels:
         app: mybackend
     spec:
-      serviceAccountName: my-svc-account
+      serviceAccountName: my-svc-account-v1
       containers:
       - name: mybackend
         image: bouzaianerima/backend:87.0
         ports:
         - containerPort: 5000
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true  
-          runAsUser: 1000     
+#        securityContext:
+ #         allowPrivilegeEscalation: false
+  #        runAsNonRoot: true  
+   #       runAsUser: 1000     
 
